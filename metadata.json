@@ -1,5 +1,5 @@
 {
-  "name": "Last Stand: Armored Division",
-  "description": "A 3D tank defense game where you defend a forest position against waves of enemy tanks and infantry using a machine gun and 120mm shells.",
+  "name": "Metro Planner",
+  "description": "A subway network building puzzle game. Connect stations with metro lines, deploy trains, and keep passengers moving efficiently. If passengers wait too long, it's game over!",
   "requestFramePermissions": []
 }
