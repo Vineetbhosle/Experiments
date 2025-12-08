@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { GameScene } from './components/GameScene';
 import { GameOverlay } from './components/GameOverlay';
 import { GameOverModal } from './components/GameOverModal';
@@ -54,6 +54,19 @@ export default function App() {
   const updateStats = useCallback((newStats: Partial<GameStats>) => {
     setStats((prev) => ({ ...prev, ...newStats }));
   }, []);
+
+  useEffect(() => {
+    if (!hasStarted) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'p' || e.key === 'P') {
+        handlePauseToggle();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [hasStarted, handlePauseToggle]);
 
   if (!hasStarted) {
     return <HomePage onStart={handleStartGame} />;
