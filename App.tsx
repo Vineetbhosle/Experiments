@@ -28,10 +28,11 @@ export default function App() {
     setGameKey(prev => prev + 1);
   }, []);
 
-  const handleGameOver = useCallback((score: number) => {
+  const handleGameOver = useCallback((score: number, passengersDelivered: number) => {
     setStats(prev => ({
       ...prev,
       score,
+      passengersDelivered,
       isGameOver: true,
     }));
   }, []);

@@ -127,7 +127,7 @@ const createShapeGeometry = (shape: StationShape, size: number = 1): THREE.Buffe
 
 // 3D Game Component
 interface MetroGameProps {
-  onGameOver: (score: number) => void;
+  onGameOver: (score: number, passengersDelivered: number) => void;
   isPaused: boolean;
 }
 
@@ -829,7 +829,7 @@ export const MetroGame: React.FC<MetroGameProps> = ({ onGameOver, isPaused }) =>
 
         if (gameOver) {
           newState.isGameOver = true;
-          onGameOver(newState.score);
+          onGameOver(newState.score, newState.passengersDelivered);
           return newState;
         }
 
@@ -840,16 +840,44 @@ export const MetroGame: React.FC<MetroGameProps> = ({ onGameOver, isPaused }) =>
           const updatedTrains = line.trains.map(train => {
             let newTrain = { ...train };
             const currentStationId = line.stations[train.currentStationIndex];
+            const currentStation = newState.stations.find(s => s.id === currentStationId);
+
+            // Helper function to handle passenger pickup/dropoff at a station
+            const handleStationStop = (stationId: string) => {
+              const station = newState.stations.find(s => s.id === stationId);
+              if (!station) return;
+
+              // Drop off passengers
+              const droppedOff = newTrain.passengers.filter(p => p.destination === station.shape);
+              newState.score += droppedOff.length * 10;
+              newState.passengersDelivered += droppedOff.length;
+              newTrain.passengers = newTrain.passengers.filter(p => p.destination !== station.shape);
+
+              // Pick up passengers
+              const stationIndex = newState.stations.findIndex(s => s.id === stationId);
+              if (stationIndex !== -1) {
+                const stationData = newState.stations[stationIndex];
+                const availableSpace = newTrain.capacity - newTrain.passengers.length;
+                const toPickUp = stationData.passengers.slice(0, availableSpace);
+                const remaining = stationData.passengers.slice(availableSpace);
+
+                newTrain.passengers = [...newTrain.passengers, ...toPickUp];
+                newState.stations = newState.stations.map((s, i) =>
+                  i === stationIndex ? { ...s, passengers: remaining } : s
+                );
+              }
+            };
+
             const nextIndex = train.currentStationIndex + train.direction;
 
+            // At end of line - reverse and handle station
             if (nextIndex < 0 || nextIndex >= line.stations.length) {
+              handleStationStop(currentStationId);
               newTrain.direction = (train.direction * -1) as 1 | -1;
               return newTrain;
             }
 
-            const currentStation = newState.stations.find(s => s.id === currentStationId);
             const nextStation = newState.stations.find(s => s.id === line.stations[nextIndex]);
-
             if (!currentStation || !nextStation) return newTrain;
 
             const segmentDistance = distance(currentStation.position, nextStation.position);
@@ -861,27 +889,10 @@ export const MetroGame: React.FC<MetroGameProps> = ({ onGameOver, isPaused }) =>
               newTrain.currentStationIndex = nextIndex;
               newTrain.position = { ...nextStation.position };
 
-              // Drop off passengers
-              const droppedOff = newTrain.passengers.filter(p => p.destination === nextStation.shape);
-              newState.score += droppedOff.length * 10;
-              newState.passengersDelivered += droppedOff.length;
+              // Handle passenger pickup/dropoff at this station
+              handleStationStop(nextStation.id);
 
-              newTrain.passengers = newTrain.passengers.filter(p => p.destination !== nextStation.shape);
-
-              // Pick up passengers
-              const stationIndex = newState.stations.findIndex(s => s.id === nextStation.id);
-              if (stationIndex !== -1) {
-                const station = newState.stations[stationIndex];
-                const availableSpace = train.capacity - newTrain.passengers.length;
-                const toPickUp = station.passengers.slice(0, availableSpace);
-                const remaining = station.passengers.slice(availableSpace);
-
-                newTrain.passengers = [...newTrain.passengers, ...toPickUp];
-                newState.stations = newState.stations.map((s, i) =>
-                  i === stationIndex ? { ...s, passengers: remaining } : s
-                );
-              }
-
+              // Reverse at end of line
               if (newTrain.currentStationIndex === 0 || newTrain.currentStationIndex === line.stations.length - 1) {
                 newTrain.direction = (newTrain.direction * -1) as 1 | -1;
               }
