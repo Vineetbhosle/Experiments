@@ -1,17 +1,21 @@
 {
-  "name": "last-stand:-armored-division",
+  "name": "palantir-ai-video",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "remotion:studio": "npx remotion studio src/remotion/index.ts",
+    "remotion:render": "npx remotion render src/remotion/index.ts PalantirAI out/palantir-ai.mp4"
   },
   "dependencies": {
+    "@remotion/cli": "^4.0.439",
+    "@remotion/player": "^4.0.439",
+    "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "three": "^0.181.2",
-    "react": "^19.2.0"
+    "remotion": "^4.0.439"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
