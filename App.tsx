@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Player } from '@remotion/player';
 import { PalantirAI, TOTAL_DURATION } from './src/remotion/PalantirAI';
 
 export default function App() {
-  const [isPlaying, setIsPlaying] = useState(false);
-
   return (
     <div
       style={{
@@ -15,16 +13,17 @@ export default function App() {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: 'system-ui, -apple-system, sans-serif',
-        padding: 40,
+        padding: '20px 12px',
       }}
     >
       <h1
         style={{
           color: 'white',
-          fontSize: 28,
+          fontSize: 'clamp(18px, 5vw, 28px)',
           fontWeight: 700,
           marginBottom: 8,
           letterSpacing: '-0.5px',
+          textAlign: 'center',
         }}
       >
         What is Palantir AI
@@ -32,8 +31,8 @@ export default function App() {
       <p
         style={{
           color: '#666',
-          fontSize: 14,
-          marginBottom: 32,
+          fontSize: 'clamp(10px, 2.5vw, 14px)',
+          marginBottom: 'clamp(16px, 4vw, 32px)',
           letterSpacing: '2px',
           textTransform: 'uppercase',
         }}
@@ -47,6 +46,8 @@ export default function App() {
           overflow: 'hidden',
           boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
           border: '1px solid rgba(255,255,255,0.08)',
+          width: '100%',
+          maxWidth: 960,
         }}
       >
         <Player
@@ -56,8 +57,8 @@ export default function App() {
           durationInFrames={TOTAL_DURATION}
           fps={30}
           style={{
-            width: 960,
-            height: 540,
+            width: '100%',
+            aspectRatio: '16 / 9',
           }}
           controls
           autoPlay
@@ -68,8 +69,9 @@ export default function App() {
       <p
         style={{
           color: '#444',
-          fontSize: 12,
-          marginTop: 24,
+          fontSize: 'clamp(10px, 2vw, 12px)',
+          marginTop: 16,
+          textAlign: 'center',
         }}
       >
         Built with Remotion — 29 seconds, 30fps, 1920×1080
